@@ -7,7 +7,7 @@ interface QueueItem {
 }
 
 const API = axios.create({
-  baseURL: import.meta.env.PUBLIC_API_URL,
+  baseURL: import.meta.env.VITE_PUBLIC_API_URL,
   withCredentials: true,
 });
 
@@ -36,6 +36,14 @@ API.interceptors.response.use(
 
     if (originalRequest.url === API_ROUTES.AUTH.REFRESH) {
       window.location.href = "/sign-in";
+      return Promise.reject(error);
+    }
+
+    const url = originalRequest.url ?? "";
+    if (
+      url === API_ROUTES.AUTH.LOGIN ||
+      url === API_ROUTES.AUTH.REGISTER
+    ) {
       return Promise.reject(error);
     }
 
