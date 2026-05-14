@@ -5,9 +5,11 @@ import { useRegister } from "../../queries";
 import type { RegisterRequest } from "../../types";
 
 const SignUpPage = () => {
-  const { mutate } = useRegister();
+  const { mutateAsync } = useRegister();
 
-  const handleSubmit = (registerData: RegisterRequest) => mutate(registerData);
+  const handleSubmit = async (registerData: RegisterRequest) => {
+    await mutateAsync(registerData);
+  };
 
   return (
     <AuthPageLayout>

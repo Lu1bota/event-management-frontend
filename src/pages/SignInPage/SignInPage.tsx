@@ -4,10 +4,28 @@ import { AuthForm, AuthPageLayout } from "../../components/common";
 import { useLogin } from "../../queries";
 import type { LoginRequest } from "../../types";
 
-const SignInPage = () => {
-  const { mutate } = useLogin();
+const footer = (
+  <>
+    Don&apos;t have an account?{" "}
+    <Link to="/sign-up">
+      <Text
+        as="span"
+        fontWeight="semibold"
+        colorPalette="purple"
+        _hover={{ textDecoration: "underline" }}
+      >
+        Sign up
+      </Text>
+    </Link>
+  </>
+);
 
-  const handleSubmit = (loginData: LoginRequest) => mutate(loginData);
+const SignInPage = () => {
+  const { mutateAsync } = useLogin();
+
+  const handleSubmit = async (loginData: LoginRequest) => {
+    await mutateAsync(loginData);
+  };
 
   return (
     <AuthPageLayout>
@@ -16,21 +34,7 @@ const SignInPage = () => {
         submitLabel="Log in"
         variant="login"
         onSubmit={handleSubmit}
-        footer={
-          <>
-            Don&apos;t have an account?{" "}
-            <Link to="/sign-up">
-              <Text
-                as="span"
-                fontWeight="semibold"
-                colorPalette="purple"
-                _hover={{ textDecoration: "underline" }}
-              >
-                Sign up
-              </Text>
-            </Link>
-          </>
-        }
+        footer={footer}
       />
     </AuthPageLayout>
   );

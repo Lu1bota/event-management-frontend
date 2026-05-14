@@ -29,7 +29,6 @@ export type AuthFormValues = LoginRequest &
 type AuthFormBaseProps = {
   title?: string;
   submitLabel?: string;
-  /** e.g. “Already have an account? Log in” under the form */
   footer?: ReactNode;
 };
 
