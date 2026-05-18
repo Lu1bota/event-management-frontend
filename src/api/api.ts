@@ -54,7 +54,11 @@ API.interceptors.response.use(
     }
 
     const url = originalRequest.url ?? "";
-    if (url === API_ROUTES.AUTH.LOGIN || url === API_ROUTES.AUTH.REGISTER) {
+    if (
+      url === API_ROUTES.AUTH.LOGIN ||
+      url === API_ROUTES.AUTH.REGISTER ||
+      url === API_ROUTES.USERS.ME
+    ) {
       return Promise.reject(error);
     }
 

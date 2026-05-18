@@ -3,6 +3,7 @@ import type { AxiosErrorRes, LoginRequest, RegisterRequest } from "../../types";
 import { login, logout, refresh, register } from "../../api";
 import toast from "react-hot-toast";
 import { setAccessToken } from "../../api/api";
+import { useUserStore } from "../../store/users";
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
@@ -47,12 +48,14 @@ export const useRefresh = () =>
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
+  const clearUser = useUserStore((state) => state.clearUser);
 
   return useMutation<{ message: string }, AxiosErrorRes>({
     mutationFn: () => logout(),
     mutationKey: ["auth-logout"],
     onSuccess: () => {
       setAccessToken(null);
+      clearUser();
       queryClient.removeQueries({ queryKey: ["userInfo"] });
     },
     onError: (error) => {
