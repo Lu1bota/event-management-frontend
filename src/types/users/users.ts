@@ -7,7 +7,7 @@ export interface GetUserInfoRes {
 }
 
 export interface UserState extends GetUserInfoRes {
-  setUser: (user: GetUserInfoRes) => void;
+  setUser: (user: User) => void;
   clearUser: () => void;
 }
 

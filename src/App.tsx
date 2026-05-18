@@ -2,18 +2,31 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { SignInPage, SignUpPage } from "./pages";
 import { HomePage } from "./pages/HomePage";
+import AuthProvider from "./providers/AuthProvider";
+import PublicRoute from "./components/routing/PublicRoute";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
 
 function App() {
   // return null;
 
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/sign-in" element={<SignInPage />} />
-      <Route path="/sign-up" element={<SignUpPage />} />
-      {/* <Route path="/about" element={<About />} />
+    <AuthProvider>
+      <Routes>
+        {/* Public Routes */}
+        <Route element={<PublicRoute />}>
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+        </Route>
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+
+        {/* <Route path="/about" element={<About />} />
       <Route path="*" element={<NotFound />} /> */}
-    </Routes>
+      </Routes>
+    </AuthProvider>
   );
 }
 

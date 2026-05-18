@@ -6,11 +6,6 @@ interface QueueItem {
   reject: (reason?: unknown) => void;
 }
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_PUBLIC_API_URL,
-  withCredentials: true,
-});
-
 let isRefreshing = false;
 let failedQueue: QueueItem[] = [];
 
@@ -25,6 +20,24 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
+const API = axios.create({
+  baseURL: import.meta.env.VITE_PUBLIC_API_URL,
+  withCredentials: true,
+});
+
+let accessToken: string | null = null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+
+API.interceptors.request.use((config) => {
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -35,15 +48,13 @@ API.interceptors.response.use(
     }
 
     if (originalRequest.url === API_ROUTES.AUTH.REFRESH) {
+      setAccessToken(null);
       window.location.href = "/sign-in";
       return Promise.reject(error);
     }
 
     const url = originalRequest.url ?? "";
-    if (
-      url === API_ROUTES.AUTH.LOGIN ||
-      url === API_ROUTES.AUTH.REGISTER
-    ) {
+    if (url === API_ROUTES.AUTH.LOGIN || url === API_ROUTES.AUTH.REGISTER) {
       return Promise.reject(error);
     }
 
@@ -59,10 +70,14 @@ API.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      await API.post(API_ROUTES.AUTH.REFRESH);
+      const { data } = await API.post<{ accessToken: string }>(
+        API_ROUTES.AUTH.REFRESH,
+      );
+      setAccessToken(data.accessToken);
       processQueue(null);
       return API(originalRequest);
     } catch (refreshError) {
+      setAccessToken(null);
       processQueue(refreshError);
       window.location.href = "/sign-in";
       return Promise.reject(refreshError);

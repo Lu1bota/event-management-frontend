@@ -8,6 +8,8 @@ export const useFetchUserInfo = () =>
   useQuery<User, AxiosErrorRes>({
     queryFn: getMe,
     queryKey: ["userInfo"],
+    retry: false,
+    staleTime: 5 * 60 * 1000,
   });
 
 export const useGetMe = () => {
