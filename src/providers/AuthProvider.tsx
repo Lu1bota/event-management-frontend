@@ -3,6 +3,7 @@ import type React from "react";
 import { useUserStore } from "../store/users";
 import { useFetchUserInfo } from "../queries";
 import { Flex, Spinner } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -10,7 +11,19 @@ interface AuthProviderProps {
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const { setUser, clearUser } = useUserStore();
-  const { data, isError, isSuccess, isPending } = useFetchUserInfo();
+  const { data, isSuccess, isPending, isError } = useFetchUserInfo();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleForceLogout = () => {
+      clearUser();
+      queryClient.removeQueries({ queryKey: ["userInfo"] });
+    };
+
+    window.addEventListener("auth:logout", handleForceLogout);
+
+    return () => window.removeEventListener("auth:logout", handleForceLogout);
+  }, [clearUser, queryClient]);
 
   useEffect(() => {
     if (isSuccess && data) setUser(data);

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosErrorRes, LoginRequest, RegisterRequest } from "../../types";
 import { login, logout, refresh, register } from "../../api";
 import toast from "react-hot-toast";
-import { setAccessToken } from "../../api/api";
+import { setAccessToken, setIsLoggedOut } from "../../api/api";
 import { useUserStore } from "../../store/users";
 
 export const useRegister = () => {
@@ -28,6 +28,7 @@ export const useLogin = () => {
     mutationFn: (data: LoginRequest) => login(data),
     mutationKey: ["auth-login"],
     onSuccess: ({ accessToken }) => {
+      setIsLoggedOut(false);
       setAccessToken(accessToken);
       queryClient.invalidateQueries({ queryKey: ["userInfo"] });
     },
@@ -54,6 +55,7 @@ export const useLogout = () => {
     mutationFn: () => logout(),
     mutationKey: ["auth-logout"],
     onSuccess: () => {
+      setIsLoggedOut(true);
       setAccessToken(null);
       clearUser();
       queryClient.removeQueries({ queryKey: ["userInfo"] });

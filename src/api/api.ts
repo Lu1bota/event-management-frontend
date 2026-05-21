@@ -26,9 +26,14 @@ const API = axios.create({
 });
 
 let accessToken: string | null = null;
+let isLoggedOut = false;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+};
+
+export const setIsLoggedOut = (value: boolean) => {
+  isLoggedOut = value;
 };
 
 API.interceptors.request.use((config) => {
@@ -47,18 +52,19 @@ API.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    if (isLoggedOut) {
+      return Promise.reject(error);
+    }
+
     if (originalRequest.url === API_ROUTES.AUTH.REFRESH) {
       setAccessToken(null);
-      window.location.href = "/sign-in";
+      setIsLoggedOut(true);
+      window.dispatchEvent(new CustomEvent("auth:logout"));
       return Promise.reject(error);
     }
 
     const url = originalRequest.url ?? "";
-    if (
-      url === API_ROUTES.AUTH.LOGIN ||
-      url === API_ROUTES.AUTH.REGISTER ||
-      url === API_ROUTES.USERS.ME
-    ) {
+    if (url === API_ROUTES.AUTH.LOGIN || url === API_ROUTES.AUTH.REGISTER) {
       return Promise.reject(error);
     }
 
@@ -83,7 +89,7 @@ API.interceptors.response.use(
     } catch (refreshError) {
       setAccessToken(null);
       processQueue(refreshError);
-      window.location.href = "/sign-in";
+      window.dispatchEvent(new CustomEvent("auth:logout"));
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

@@ -9,7 +9,6 @@ export const useFetchUserInfo = () =>
     queryFn: getMe,
     queryKey: ["userInfo"],
     retry: false,
-    staleTime: 5 * 60 * 1000,
   });
 
 export const useGetMe = () => {
