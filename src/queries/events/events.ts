@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AxiosErrorRes, EventRequest, Participation } from "../../types";
+import type {
+  AxiosErrorRes,
+  EventRequest,
+  IEvent,
+  Participation,
+} from "../../types";
 import {
   createEvent,
   deleteEvent,
@@ -13,7 +18,7 @@ import { toast } from "react-hot-toast/headless";
 import { useEffect } from "react";
 
 export const useFetchEvents = () =>
-  useQuery<Event[], AxiosErrorRes>({
+  useQuery<IEvent[], AxiosErrorRes>({
     queryFn: getEvents,
     queryKey: ["events"],
   });
@@ -32,7 +37,7 @@ export const useEvents = () => {
 };
 
 export const useFetchEventById = (eventId: string) =>
-  useQuery<Event, AxiosErrorRes>({
+  useQuery<IEvent, AxiosErrorRes>({
     queryFn: () => getEventById(eventId),
     queryKey: ["event", eventId],
   });
@@ -51,7 +56,7 @@ export const useEventById = (eventId: string) => {
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<Event, AxiosErrorRes, EventRequest>({
+  return useMutation<IEvent, AxiosErrorRes, EventRequest>({
     mutationFn: (data: EventRequest) => createEvent(data),
     mutationKey: ["createEvent"],
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["events"] }),
@@ -63,7 +68,7 @@ export const useCreateEvent = () => {
 export const useUpdateEvent = (eventId: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation<Event, AxiosErrorRes, EventRequest>({
+  return useMutation<IEvent, AxiosErrorRes, EventRequest>({
     mutationFn: (data: EventRequest) => updateEvent(eventId, data),
     mutationKey: ["updateEvent", eventId],
     onSuccess: () => {

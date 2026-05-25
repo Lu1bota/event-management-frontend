@@ -1,4 +1,4 @@
-import type { Participation } from "../events";
+import type { IEvent, Participation } from "../events";
 
 export interface GetUserInfoRes {
   id: string | null;
@@ -7,6 +7,8 @@ export interface GetUserInfoRes {
 }
 
 export interface UserState extends GetUserInfoRes {
+  organizedEvents: null | IEvent[];
+  participations: Participation[] | null;
   setUser: (user: User) => void;
   clearUser: () => void;
 }
@@ -15,6 +17,6 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  organizedEvents: Event[] | [];
+  organizedEvents: IEvent[] | [];
   participations: Participation[] | [];
 }

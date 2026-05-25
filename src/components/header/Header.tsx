@@ -11,13 +11,12 @@ import {
 import { styles } from "./styles";
 import { IoIosList } from "react-icons/io";
 import { CiCalendar } from "react-icons/ci";
-import { Link as RouterLink, type LinkProps } from "react-router-dom";
-import CreateEventLink from "../common/createEvent/CreateEventLink";
+import { Link as RouterLink } from "react-router-dom";
 import { useUserStore } from "../../store/users/useUserStore";
 import { MdOutlineLogout } from "react-icons/md";
 import { useLogout } from "../../queries";
 import { useState } from "react";
-import LogoutModal from "../common/LogoutModal/LogoutModal";
+import { CreateEventLink, LogoutModal } from "../common";
 
 interface Navigation {
   name: string;
@@ -48,15 +47,13 @@ const Header = () => {
             <List.Root variant="plain" {...styles.navigationList}>
               {navigationItems.map((item, index) => (
                 <List.Item key={index} {...styles.navigationItem}>
-                  <ChakraLink
-                    as={RouterLink}
-                    {...({ to: `${item.href}` } as unknown as LinkProps)}
-                    {...styles.navigationLink}
-                  >
-                    <Flex align="center" gap={"6px"}>
-                      {item.icon}
-                      <Text>{item.name}</Text>
-                    </Flex>
+                  <ChakraLink asChild {...styles.navigationLink}>
+                    <RouterLink to={item.href}>
+                      <Flex align="center" gap="6px">
+                        {item.icon}
+                        <Text>{item.name}</Text>
+                      </Flex>
+                    </RouterLink>
                   </ChakraLink>
                 </List.Item>
               ))}

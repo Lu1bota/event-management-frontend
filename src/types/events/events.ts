@@ -1,6 +1,6 @@
 export type Visibility = "Public" | "Private";
 
-export interface Event {
+export interface IEvent {
   id: string;
   title: string;
   description: string;

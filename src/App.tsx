@@ -1,10 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { SignInPage, SignUpPage } from "./pages";
-import { HomePage } from "./pages/HomePage";
-import AuthProvider from "./providers/AuthProvider";
-import PublicRoute from "./components/routing/PublicRoute";
-import ProtectedRoute from "./components/routing/ProtectedRoute";
+import { HomePage, SignInPage, SignUpPage } from "./pages";
+import { ProtectedRoute, PublicRoute } from "./components";
+import { AuthProvider } from "./providers";
 
 function App() {
   // return null;
