@@ -43,14 +43,14 @@ export const useFetchEventById = (eventId: string) =>
   });
 
 export const useEventById = (eventId: string) => {
-  const { data, isError, error, isPending, isSuccess, refetch } =
+  const { data, isError, error, isPending, isSuccess, refetch, isLoading } =
     useFetchEventById(eventId);
 
   useEffect(() => {
     if (isError) toast.error(error.response?.data.message || error.message);
   }, [isError, error]);
 
-  return { data, isError, error, isPending, isSuccess, refetch };
+  return { data, isError, error, isPending, isSuccess, refetch, isLoading };
 };
 
 export const useCreateEvent = () => {

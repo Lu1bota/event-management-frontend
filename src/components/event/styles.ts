@@ -49,7 +49,6 @@ export const styles = {
 
   listItemDetails: {
     display: "flex",
-    // justifyContent: "center",
     alignItems: "center",
     gap: "5px",
     color: "#6B7280",

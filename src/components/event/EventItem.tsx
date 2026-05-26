@@ -1,4 +1,4 @@
-import { Box, Button, List, Text } from "@chakra-ui/react";
+import { Box, List, Text } from "@chakra-ui/react";
 import type { IEvent } from "../../types";
 import { useMemo, type FC } from "react";
 import { CiCalendar, CiClock2 } from "react-icons/ci";
@@ -8,6 +8,9 @@ import { styles } from "./styles";
 import { useJoinEvent, useLeaveEvent } from "../../queries";
 import { useUserStore } from "../../store/users";
 import { useQueryClient } from "@tanstack/react-query";
+import { CustomButton } from "../common";
+import { formatEventDate, formatEventTime } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
 interface EventItemProps {
   event: IEvent;
@@ -18,22 +21,6 @@ interface eventDetailsTypes {
   icon: React.ReactNode;
   content: string;
 }
-
-const formatEventDate = (dateTime: Date | string): string => {
-  return new Date(dateTime).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
-
-const formatEventTime = (dateTime: Date | string): string => {
-  return new Date(dateTime).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
 
 const EventItem: FC<EventItemProps> = (props) => {
   const {
@@ -46,6 +33,7 @@ const EventItem: FC<EventItemProps> = (props) => {
     participantCount,
   } = props.event;
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const participations = useUserStore((state) => state.participations);
 
@@ -66,6 +54,8 @@ const EventItem: FC<EventItemProps> = (props) => {
     await mutateLeave(id);
     queryClient.invalidateQueries({ queryKey: ["userInfo"] });
   };
+
+  const handleNavigate = () => navigate(`/events/${id}`);
 
   const eventDetails: eventDetailsTypes[] = [
     {
@@ -91,7 +81,7 @@ const EventItem: FC<EventItemProps> = (props) => {
   ];
 
   return (
-    <Box as={"ul"} {...styles.event}>
+    <Box as={"li"} {...styles.event} onClick={handleNavigate}>
       <Box as={"h2"} {...styles.eventTitle}>
         {title}
       </Box>
@@ -110,21 +100,14 @@ const EventItem: FC<EventItemProps> = (props) => {
 
       <Box {...styles.line} />
 
-      {isJoined ? (
-        <Button
-          loading={isPendingLeave}
-          onClick={handleLeave}
-          {...styles.button}
-          backgroundColor="#DC2626"
-          _hover={{ backgroundColor: "#B91C1C" }}
-        >
-          Leave Event
-        </Button>
-      ) : (
-        <Button loading={isPendingJoin} onClick={handleJoin} {...styles.button}>
-          Join Event
-        </Button>
-      )}
+      <CustomButton
+        variant="join"
+        isJoined={isJoined}
+        isPendingLeave={isPendingLeave}
+        handleLeave={handleLeave}
+        isPendingJoin={isPendingJoin}
+        handleJoin={handleJoin}
+      />
     </Box>
   );
 };
