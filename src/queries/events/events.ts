@@ -14,8 +14,9 @@ import {
   leaveEvent,
   updateEvent,
 } from "../../api";
-import { toast } from "react-hot-toast/headless";
+// import { toast } from "react-hot-toast/headless";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export const useFetchEvents = () =>
   useQuery<IEvent[], AxiosErrorRes>({
@@ -72,6 +73,7 @@ export const useUpdateEvent = (eventId: string) => {
     mutationFn: (data: EventRequest) => updateEvent(eventId, data),
     mutationKey: ["updateEvent", eventId],
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
     },

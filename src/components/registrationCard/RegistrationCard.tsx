@@ -1,7 +1,7 @@
 import { Box, Flex, Progress, Text } from "@chakra-ui/react";
-import { useMemo, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import { styles } from "./styles";
-import { CustomButton } from "../common";
+import { ConfirmModal, CustomButton } from "../common";
 import { useDeleteEvent, useJoinEvent, useLeaveEvent } from "../../queries";
 import { useUserStore } from "../../store/users";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +16,8 @@ interface RegistrationCardProps {
 
 const RegistrationCard: FC<RegistrationCardProps> = (props) => {
   const { participantCount, capacity, eventId, isCreator = false } = props;
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -96,18 +98,27 @@ const RegistrationCard: FC<RegistrationCardProps> = (props) => {
           <>
             <CustomButton
               variant="edit"
-              handleEdit={() => navigate("/update")}
+              handleEdit={() => navigate(`/update/${eventId}`)}
             />
 
             <CustomButton
               variant="delete"
-              handleDelete={handleDelete}
-              isPendingDelete={isPendingDelete}
-              eventId={eventId}
+              handleOpenModal={setIsConfirmModalOpen}
             />
           </>
         )}
       </Flex>
+
+      <ConfirmModal
+        btnText="Delete"
+        description="Are you sure you want to delete this event? This action cannot be undone."
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          handleDelete(eventId);
+        }}
+        isLoading={isPendingDelete}
+      />
     </Box>
   );
 };

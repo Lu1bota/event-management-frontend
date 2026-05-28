@@ -1,13 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { EventDetailsPage, HomePage, SignInPage, SignUpPage } from "./pages";
+import {
+  CalendarPage,
+  EventDetailsPage,
+  HomePage,
+  SignInPage,
+  SignUpPage,
+  UpdateEventPage,
+} from "./pages";
 import { ProtectedRoute, PublicRoute } from "./components";
 import { AuthProvider } from "./providers";
 import { Toaster } from "react-hot-toast";
+import CreateEventPage from "./pages/CreateEventPage/CreateEventPage";
 
 function App() {
-  // return null;
-
   return (
     <>
       <AuthProvider>
@@ -22,10 +28,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/events/:eventId" element={<EventDetailsPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/create" element={<CreateEventPage />} />
+            <Route path="/update/:eventId" element={<UpdateEventPage />} />
           </Route>
-
-          {/* <Route path="/about" element={<About />} />
-      <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </AuthProvider>
 

@@ -1,9 +1,13 @@
-import { Box, Button, Container, Flex, Spinner } from "@chakra-ui/react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Box, Container, Flex, Spinner } from "@chakra-ui/react";
+import { Navigate, useParams } from "react-router-dom";
 import { useEventById } from "../../queries";
 import { styles } from "./styles";
-import { EventDetails, Header, RegistrationCard } from "../../components";
-import { FaArrowLeft } from "react-icons/fa";
+import {
+  BackLink,
+  EventDetails,
+  Header,
+  RegistrationCard,
+} from "../../components";
 import { useUserStore } from "../../store/users";
 
 const EventDetailsPage = () => {
@@ -11,8 +15,6 @@ const EventDetailsPage = () => {
 
   const { eventId } = useParams<{ eventId: string }>();
   const { data, isLoading, isError } = useEventById(eventId ?? "");
-
-  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -30,10 +32,7 @@ const EventDetailsPage = () => {
 
       <Container {...styles.container}>
         <Box {...styles.box}>
-          <Button {...styles.backLink} onClick={() => navigate("/")}>
-            <FaArrowLeft />
-            Back to events
-          </Button>
+          <BackLink />
 
           <Flex gap={"20px"}>
             <EventDetails event={data} />

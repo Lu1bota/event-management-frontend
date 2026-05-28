@@ -16,7 +16,7 @@ import { useUserStore } from "../../store/users/useUserStore";
 import { MdOutlineLogout } from "react-icons/md";
 import { useLogout } from "../../queries";
 import { useState } from "react";
-import { CreateEventLink, LogoutModal } from "../common";
+import { ConfirmModal, CreateEventLink } from "../common";
 
 interface Navigation {
   name: string;
@@ -86,11 +86,14 @@ const Header = () => {
         </Container>
       </Box>
 
-      <LogoutModal
+      <ConfirmModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={handleLogout}
         isLoading={isPending}
+        btnText="Log out"
+        description="Are you sure you want to log out? You will need to sign in again
+        to access your account."
       />
     </>
   );

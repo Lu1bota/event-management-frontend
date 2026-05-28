@@ -3,5 +3,7 @@ export * from "./AuthPageLayout";
 export * from "./CustomInput";
 export * from "./CustomPasswordInput";
 export * from "./createEvent";
-export * from "./LogoutModal";
+export * from "./ConfirmModal";
 export * from "./customButton";
+export * from "./backLink";
+export * from "./eventForm";

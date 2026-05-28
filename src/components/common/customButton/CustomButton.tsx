@@ -8,29 +8,25 @@ type Variant = "join" | "edit" | "delete";
 
 interface CustomButtonProps {
   variant: Variant;
-  eventId?: string;
   isJoined?: boolean;
   isPendingLeave?: boolean;
   isPendingJoin?: boolean;
-  isPendingDelete?: boolean;
   handleLeave?: () => void;
   handleJoin?: () => void;
   handleEdit?: () => void;
-  handleDelete?: (eventId: string) => void;
+  handleOpenModal?: (isOpen: boolean) => void;
 }
 
 const CustomButton: FC<CustomButtonProps> = (props) => {
   const {
     variant,
-    eventId,
     isJoined,
     isPendingJoin,
     isPendingLeave,
-    isPendingDelete,
     handleJoin,
     handleLeave,
     handleEdit,
-    handleDelete,
+    handleOpenModal,
   } = props;
 
   if (variant === "join") {
@@ -82,11 +78,10 @@ const CustomButton: FC<CustomButtonProps> = (props) => {
     return (
       <Button
         onClick={() => {
-          if (handleDelete && eventId) {
-            handleDelete(eventId);
+          if (handleOpenModal) {
+            handleOpenModal(true);
           }
         }}
-        loading={isPendingDelete}
         {...styles.buttonDelete}
       >
         <RiDeleteBinLine />

@@ -1,19 +1,23 @@
 import { Button, Dialog, Flex, Text } from "@chakra-ui/react";
 import { MdOutlineLogout } from "react-icons/md";
 
-interface LogoutModalProps {
+interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (eventId?: string) => void;
   isLoading?: boolean;
+  btnText: string;
+  description: string;
 }
 
-const LogoutModal = ({
+const ConfirmModal = ({
   isOpen,
   onClose,
   onConfirm,
   isLoading,
-}: LogoutModalProps) => {
+  btnText,
+  description,
+}: ConfirmModalProps) => {
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
       <Dialog.Backdrop />
@@ -25,31 +29,34 @@ const LogoutModal = ({
           mx="auto"
           my="auto"
         >
-          <Flex
-            w="48px"
-            h="48px"
-            borderRadius="10px"
-            backgroundColor="#FEE2E2"
-            align="center"
-            justify="center"
-            mb="16px"
-          >
-            <MdOutlineLogout size="22px" color="#EF4444" />
-          </Flex>
+          {btnText === "Log out" && (
+            <>
+              <Flex
+                w="48px"
+                h="48px"
+                borderRadius="10px"
+                backgroundColor="#FEE2E2"
+                align="center"
+                justify="center"
+                mb="16px"
+              >
+                <MdOutlineLogout size="22px" color="#EF4444" />
+              </Flex>
 
-          <Dialog.Title
-            fontSize="18px"
-            fontWeight="600"
-            color="#111827"
-            mb="8px"
-          >
-            Log out
-          </Dialog.Title>
+              <Dialog.Title
+                fontSize="18px"
+                fontWeight="600"
+                color="#111827"
+                mb="8px"
+              >
+                Log out
+              </Dialog.Title>
+            </>
+          )}
 
           <Dialog.Description>
             <Text fontSize="14px" color="#6B7280" mb="24px">
-              Are you sure you want to log out? You will need to sign in again
-              to access your account.
+              {description}
             </Text>
           </Dialog.Description>
 
@@ -70,11 +77,13 @@ const LogoutModal = ({
               backgroundColor="#EF4444"
               color="white"
               borderRadius="8px"
-              onClick={onConfirm}
+              onClick={() => {
+                if (onConfirm) onConfirm();
+              }}
               loading={isLoading}
               _hover={{ backgroundColor: "#DC2626" }}
             >
-              Log out
+              {btnText}
             </Button>
           </Flex>
         </Dialog.Content>
@@ -83,4 +92,4 @@ const LogoutModal = ({
   );
 };
 
-export default LogoutModal;
+export default ConfirmModal;
