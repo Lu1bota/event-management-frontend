@@ -27,11 +27,11 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (isSuccess && data) setUser(data);
-  }, [isSuccess, data]);
+  }, [isSuccess, data, setUser]);
 
   useEffect(() => {
     if (isError) clearUser();
-  }, [isError]);
+  }, [isError, clearUser]);
 
   if (isPending)
     return (

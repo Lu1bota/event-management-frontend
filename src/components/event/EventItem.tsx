@@ -16,7 +16,7 @@ interface EventItemProps {
   event: IEvent;
 }
 
-interface eventDetailsTypes {
+interface EventDetailsTypes {
   id: string;
   icon: React.ReactNode;
   content: string;
@@ -57,7 +57,7 @@ const EventItem: FC<EventItemProps> = (props) => {
 
   const handleNavigate = () => navigate(`/events/${id}`);
 
-  const eventDetails: eventDetailsTypes[] = [
+  const eventDetails: EventDetailsTypes[] = [
     {
       id: `${id}-date`,
       icon: <CiCalendar color="#6B7280" size={"16px"} />,

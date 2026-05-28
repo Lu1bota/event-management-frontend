@@ -45,8 +45,8 @@ const Header = () => {
         <Container {...styles.headerContainer}>
           <Box as={"nav"}>
             <List.Root variant="plain" {...styles.navigationList}>
-              {navigationItems.map((item, index) => (
-                <List.Item key={index} {...styles.navigationItem}>
+              {navigationItems.map((item) => (
+                <List.Item key={item.name} {...styles.navigationItem}>
                   <ChakraLink asChild {...styles.navigationLink}>
                     <RouterLink to={item.href}>
                       <Flex align="center" gap="6px">

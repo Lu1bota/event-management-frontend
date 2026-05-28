@@ -19,5 +19,15 @@ export const useUserStore = create<UserState>()((set) => ({
       false,
     );
   },
-  clearUser: () => set({ id: null, name: null, email: null }, false),
+  clearUser: () =>
+    set(
+      {
+        id: null,
+        name: null,
+        email: null,
+        organizedEvents: null,
+        participations: null,
+      },
+      false,
+    ),
 }));

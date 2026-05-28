@@ -10,7 +10,6 @@ import {
 } from "./pages";
 import { ProtectedRoute, PublicRoute } from "./components";
 import { AuthProvider } from "./providers";
-import { Toaster } from "react-hot-toast";
 import CreateEventPage from "./pages/CreateEventPage/CreateEventPage";
 
 function App() {
@@ -34,8 +33,6 @@ function App() {
           </Route>
         </Routes>
       </AuthProvider>
-
-      <Toaster />
     </>
   );
 }

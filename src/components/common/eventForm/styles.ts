@@ -1,10 +1,12 @@
+import type { BoxProps, TextProps } from "@chakra-ui/react";
+
 export const styles = {
   page: {
     bg: "#F9FAFB",
     minHeight: "100vh",
     px: "32px",
     py: "24px",
-  },
+  } as BoxProps,
 
   card: {
     bg: "white",
@@ -14,7 +16,7 @@ export const styles = {
     py: "32px",
     maxWidth: "600px",
     mx: "auto",
-  },
+  } as BoxProps,
 
   title: {
     fontSize: "22px",
@@ -22,7 +24,7 @@ export const styles = {
     color: "#111827",
     textAlign: "center",
     mb: "6px",
-  },
+  } as TextProps,
 
   subtitle: {
     fontSize: "13px",
@@ -30,7 +32,7 @@ export const styles = {
     color: "#6B7280",
     textAlign: "left",
     mb: "24px",
-  },
+  } as TextProps,
 
   label: {
     fontSize: "13px",
@@ -40,14 +42,14 @@ export const styles = {
     display: "flex",
     alignItems: "center",
     gap: "2px",
-  },
+  } as TextProps,
 
   required: {
     color: "#EF4444",
     fontSize: "13px",
     fontWeight: "500",
     ml: "2px",
-  },
+  } as TextProps,
 
   input: {
     fontSize: "14px",
@@ -72,6 +74,13 @@ export const styles = {
       boxShadow: "0 0 0 3px rgba(79, 70, 229, 0.12)",
       outline: "none",
     },
+
+    _invalid: {
+      borderColor: "#EF4444",
+      _hover: {
+        borderColor: "#EF4444",
+      },
+    },
   },
 
   textarea: {
@@ -84,7 +93,7 @@ export const styles = {
     py: "10px",
     minHeight: "110px",
     width: "100%",
-    resize: "vertical",
+    resize: "none",
     transition: "border-color 150ms ease, box-shadow 150ms ease",
     _placeholder: {
       color: "#9CA3AF",
@@ -98,36 +107,49 @@ export const styles = {
       boxShadow: "0 0 0 3px rgba(79, 70, 229, 0.12)",
       outline: "none",
     },
+
+    _invalid: {
+      borderColor: "#EF4444",
+      _hover: {
+        borderColor: "#EF4444",
+      },
+    },
   },
+
+  errorText: {
+    color: "#EF4444",
+    fontSize: "12px",
+    mt: "0",
+  } as TextProps,
 
   twoCol: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "16px",
-  },
+  } as BoxProps,
 
   hintText: {
     fontSize: "12px",
     color: "#9CA3AF",
     mt: "6px",
-  },
+  } as TextProps,
 
   fieldGap: {
     mb: "20px",
-  },
+  } as BoxProps,
 
   visibilityLabel: {
     fontSize: "13px",
     fontWeight: "500",
     color: "#111827",
     mb: "10px",
-  },
+  } as TextProps,
 
   radioGroup: {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-  },
+  } as BoxProps,
 
   radioItem: {
     display: "flex",
@@ -136,7 +158,7 @@ export const styles = {
     cursor: "pointer",
     fontSize: "13px",
     color: "#111827",
-  },
+  } as BoxProps,
 
   radio: {
     width: "18px",
@@ -153,20 +175,20 @@ export const styles = {
     _focus: {
       boxShadow: "0 0 0 3px rgba(79, 70, 229, 0.12)",
     },
-  },
+  } as BoxProps,
 
   divider: {
     border: "none",
     borderTop: "1px solid #E5E7EB",
     my: "24px",
-  },
+  } as BoxProps,
 
   footer: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "12px",
     mt: "24px",
-  },
+  } as BoxProps,
 
   btnCancel: {
     fontSize: "14px",

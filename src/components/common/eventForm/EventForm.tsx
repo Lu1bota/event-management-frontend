@@ -1,9 +1,11 @@
 import { Box, Button, Text, Textarea } from "@chakra-ui/react";
-import { useState, type FC, type FormEvent } from "react";
+import { Formik, Form as FormikForm } from "formik";
+import type { FC } from "react";
+import * as Yup from "yup";
 import type { EventDraft } from "../../../store";
 import type { EventRequest } from "../../../types";
-import { CustomInput } from "../CustomInput";
 import { styles } from "./styles";
+import { CustomInput } from "../CustomInput";
 
 interface EventFormProps {
   mode: "create" | "update";
@@ -14,6 +16,46 @@ interface EventFormProps {
   onChange?: (field: keyof EventDraft, value: string) => void;
 }
 
+const eventSchema = Yup.object().shape({
+  title: Yup.string()
+    .min(3, "Title must be at least 3 characters")
+    .required("Event title is required"),
+  description: Yup.string()
+    .min(10, "Description must be at least 10 characters")
+    .required("Description is required"),
+  date: Yup.string().required("Date is required"),
+  time: Yup.string().required("Time is required"),
+  location: Yup.string().required("Location is required"),
+  capacity: Yup.number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .nullable()
+    .min(1, "Capacity must be at least 1"),
+});
+
+const shouldShowError = (
+  error: string | undefined,
+  touched: boolean | undefined,
+  submitCount: number,
+) => !!error && (touched || submitCount > 0);
+
+const getErrorProps = (
+  field: keyof EventDraft,
+  errors: Record<string, string | undefined>,
+  touched: Record<string, boolean | undefined>,
+  submitCount: number,
+) => {
+  const isErrorVisible = shouldShowError(
+    errors[field],
+    touched[field],
+    submitCount,
+  );
+  return {
+    isErrorTextVisible: isErrorVisible,
+    errorText: errors[field],
+    fieldRootProps: { invalid: isErrorVisible },
+  };
+};
+
 const EventForm: FC<EventFormProps> = ({
   mode,
   initialData,
@@ -22,145 +64,169 @@ const EventForm: FC<EventFormProps> = ({
   onCancel,
   onChange,
 }) => {
-  const [formData, setFormData] = useState<EventDraft>(
-    initialData || {
-      title: "",
-      description: "",
-      date: "",
-      time: "",
-      location: "",
-      capacity: "",
-    },
-  );
-
-  const handleChange = (field: keyof EventDraft, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (onChange) onChange(field, value);
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    const dateTime = new Date(`${formData.date}T${formData.time}`);
-
-    onSubmit({
-      title: formData.title,
-      description: formData.description,
-      dateTime,
-      location: formData.location,
-      capacity: formData.capacity ? Number(formData.capacity) : undefined,
-    });
+  const defaultValues: EventDraft = {
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    location: "",
+    capacity: "",
   };
 
   return (
-    <Box as="form" css={styles.card} onSubmit={handleSubmit}>
-      <Text as="h2" css={styles.title}>
-        {mode === "create" ? "Create New Event" : "Update Event"}
-      </Text>
-      <Text css={styles.subtitle}>
-        {mode === "create"
-          ? "Fill in the details to create an amazing event"
-          : "Update the details of your event"}
-      </Text>
+    <Formik<EventDraft>
+      initialValues={initialData || defaultValues}
+      validationSchema={eventSchema}
+      enableReinitialize
+      onSubmit={(values) => {
+        const dateTime = new Date(`${values.date}T${values.time}`);
 
-      <Box css={styles.fieldGap}>
-        <CustomInput
-          labelName="Event Title"
-          inputProps={{
-            placeholder: "e.g., Tech Conference 2025",
-            value: formData.title,
-            onChange: (e) => handleChange("title", e.target.value),
-            css: styles.input,
-            required: true,
-          }}
-        />
-      </Box>
+        onSubmit({
+          title: values.title,
+          description: values.description,
+          dateTime,
+          location: values.location,
+          capacity: values.capacity ? Number(values.capacity) : undefined,
+        });
+      }}
+    >
+      {({ errors, touched, submitCount, getFieldProps, handleSubmit }) => {
+        const createChangeHandler =
+          (field: keyof EventDraft) =>
+          (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            getFieldProps(field).onChange(e);
+            if (onChange) onChange(field, e.target.value);
+          };
 
-      <Box css={styles.fieldGap}>
-        <Text css={styles.label}>
-          Description{" "}
-          <Text as="span" css={styles.required}>
-            *
-          </Text>
-        </Text>
-        <Textarea
-          placeholder="Describe what makes your event special..."
-          value={formData.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-          css={styles.textarea}
-          required
-        />
-      </Box>
+        return (
+          <FormikForm onSubmit={handleSubmit} noValidate>
+            <Box css={styles.card}>
+              <Text as="h2" css={styles.title}>
+                {mode === "create" ? "Create New Event" : "Update Event"}
+              </Text>
+              <Text css={styles.subtitle}>
+                {mode === "create"
+                  ? "Fill in the details to create an amazing event"
+                  : "Update the details of your event"}
+              </Text>
 
-      <Box css={styles.twoCol} mb="20px">
-        <CustomInput
-          labelName="Date"
-          inputProps={{
-            type: "date",
-            value: formData.date,
-            onChange: (e) => handleChange("date", e.target.value),
-            css: styles.input,
-            required: true,
-          }}
-        />
-        <CustomInput
-          labelName="Time"
-          inputProps={{
-            type: "time",
-            value: formData.time,
-            onChange: (e) => handleChange("time", e.target.value),
-            css: styles.input,
-            required: true,
-          }}
-        />
-      </Box>
+              <Box css={styles.fieldGap}>
+                <CustomInput
+                  labelName="Event Title"
+                  {...getErrorProps("title", errors, touched, submitCount)}
+                  inputProps={{
+                    ...getFieldProps("title"),
+                    onChange: createChangeHandler("title"),
+                    placeholder: "e.g., Tech Conference 2025",
+                    css: styles.input,
+                  }}
+                />
+              </Box>
 
-      <Box css={styles.fieldGap}>
-        <CustomInput
-          labelName="Location"
-          inputProps={{
-            placeholder: "e.g., Convention Center, San Francisco",
-            value: formData.location,
-            onChange: (e) => handleChange("location", e.target.value),
-            css: styles.input,
-            required: true,
-          }}
-        />
-      </Box>
+              <Box css={styles.fieldGap}>
+                <Text css={styles.label}>
+                  Description
+                  <Text as="span" css={styles.required}>
+                    *
+                  </Text>
+                </Text>
+                <Textarea
+                  {...getFieldProps("description")}
+                  onChange={createChangeHandler("description")}
+                  placeholder="Describe what makes your event special..."
+                  css={styles.textarea}
+                  aria-invalid={shouldShowError(
+                    errors.description,
+                    touched.description,
+                    submitCount,
+                  )}
+                />
+                {shouldShowError(
+                  errors.description,
+                  touched.description,
+                  submitCount,
+                ) && <Text css={styles.errorText}>{errors.description}</Text>}
+              </Box>
 
-      <Box css={styles.fieldGap}>
-        <CustomInput
-          labelName="Capacity (optional)"
-          inputProps={{
-            type: "number",
-            placeholder: "Leave empty for unlimited",
-            value: formData.capacity,
-            onChange: (e) => handleChange("capacity", e.target.value),
-            css: styles.input,
-            min: 1,
-          }}
-        />
-        <Text css={styles.hintText}>
-          Maximum number of participants. Leave empty for unlimited capacity.
-        </Text>
-      </Box>
+              <Box css={styles.twoCol} mb="20px">
+                <CustomInput
+                  labelName="Date"
+                  {...getErrorProps("date", errors, touched, submitCount)}
+                  inputProps={{
+                    ...getFieldProps("date"),
+                    onChange: createChangeHandler("date"),
+                    type: "date",
+                    css: styles.input,
+                  }}
+                />
+                <CustomInput
+                  labelName="Time"
+                  {...getErrorProps("time", errors, touched, submitCount)}
+                  inputProps={{
+                    ...getFieldProps("time"),
+                    onChange: createChangeHandler("time"),
+                    type: "time",
+                    css: styles.input,
+                  }}
+                />
+              </Box>
 
-      <Box css={styles.divider} />
+              <Box css={styles.fieldGap}>
+                <CustomInput
+                  labelName="Location"
+                  {...getErrorProps("location", errors, touched, submitCount)}
+                  inputProps={{
+                    ...getFieldProps("location"),
+                    onChange: createChangeHandler("location"),
+                    placeholder: "e.g., Convention Center, San Francisco",
+                    css: styles.input,
+                  }}
+                />
+              </Box>
 
-      <Box css={styles.footer}>
-        <Button
-          type="button"
-          css={styles.btnCancel}
-          onClick={onCancel}
-          disabled={isLoading}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" css={styles.btnSubmit} loading={isLoading}>
-          {mode === "create" ? "Create Event" : "Save Changes"}
-        </Button>
-      </Box>
-    </Box>
+              <Box css={styles.fieldGap}>
+                <CustomInput
+                  labelName="Capacity (optional)"
+                  {...getErrorProps("capacity", errors, touched, submitCount)}
+                  inputProps={{
+                    ...getFieldProps("capacity"),
+                    onChange: createChangeHandler("capacity"),
+                    type: "number",
+                    placeholder: "Leave empty for unlimited",
+                    min: 1,
+                    css: styles.input,
+                  }}
+                />
+                <Text css={styles.hintText}>
+                  Maximum number of participants. Leave empty for unlimited
+                  capacity.
+                </Text>
+              </Box>
+
+              <Box css={styles.divider} />
+
+              <Box css={styles.footer}>
+                <Button
+                  type="button"
+                  css={styles.btnCancel}
+                  onClick={onCancel}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  css={styles.btnSubmit}
+                  loading={isLoading}
+                >
+                  {mode === "create" ? "Create Event" : "Save Changes"}
+                </Button>
+              </Box>
+            </Box>
+          </FormikForm>
+        );
+      }}
+    </Formik>
   );
 };
 

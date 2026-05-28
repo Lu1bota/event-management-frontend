@@ -11,7 +11,7 @@ interface EventDetailsProps {
   event: IEvent;
 }
 
-interface eventDetailsTypes {
+interface EventDetailsTypes {
   id: string;
   name: string;
   icon: React.ReactNode;
@@ -29,7 +29,7 @@ const EventDetails: FC<EventDetailsProps> = (props) => {
     participantCount,
   } = props.event;
 
-  const eventDetails: eventDetailsTypes[] = [
+  const eventDetails: EventDetailsTypes[] = [
     {
       id: `${id}-date`,
       name: "Date",

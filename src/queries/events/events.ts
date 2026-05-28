@@ -41,6 +41,7 @@ export const useFetchEventById = (eventId: string) =>
   useQuery<IEvent, AxiosErrorRes>({
     queryFn: () => getEventById(eventId),
     queryKey: ["event", eventId],
+    enabled: Boolean(eventId),
   });
 
 export const useEventById = (eventId: string) => {
@@ -108,12 +109,12 @@ export const useJoinEvent = () => {
 };
 
 export const useLeaveEvent = () => {
-  const queryClinet = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation<{ message: string }, AxiosErrorRes, string>({
     mutationFn: (eventId: string) => leaveEvent(eventId),
     mutationKey: ["leaveEvent"],
-    onSuccess: () => queryClinet.invalidateQueries({ queryKey: ["events"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["events"] }),
     onError: (error) =>
       toast.error(error.response?.data.message || error.message),
   });

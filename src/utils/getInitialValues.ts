@@ -7,4 +7,6 @@ const initialRegisterValues = { name: "", email: "", password: "" };
 const initialLoginValues = { email: "", password: "" };
 
 export const getInitialValues = (variant: AuthFormVariant): AuthFormValues =>
-  variant === "register" ? initialRegisterValues : initialLoginValues;
+  variant === "register"
+    ? { ...initialRegisterValues }
+    : { ...initialLoginValues };
